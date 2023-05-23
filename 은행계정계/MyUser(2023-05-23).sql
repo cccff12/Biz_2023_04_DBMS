@@ -113,3 +113,152 @@ ENTITY라고 부른다.
 프로그래밍에서는(자바 등) TABLE을 객체 등으로 취급한다
 JAVA 의 데이터 클래스가 여기에 해당한다.
 */
+
+
+SELECT * from tbl_buyer;
+
+-- 매우 위험한 코드
+-- update , delete를 수행할때는 pk가 아닌 칼럼을 기준으로 하지 마라
+-- 만약 pk가 아닌 칼럼을 기준으로 할때는 마우 신중하게 명령을 수행해야 한다
+update tbl_buyer
+set butel= '010-333-3333'
+WHERE buname = '성춘향';
+
+
+/*
+
+tbl_buyer 테이블에 성춘향 데이터 중에서 전화번호가 없는 데이터가 있다
+전화번호가 없는 성춘향 데이터의 전화번호를 01 0 333 3333으로 변경하고자 한다
+
+1. buname 칼럼의 데이터ㅏ 성춘향인 리스트를 조회를 한다
+2. 전화번호가 없는 null인 데이터의 buid값을 확인한다.
+*/
+
+SELECT * FROM tbl_buyer WHERE buname='성춘향';
+
+update tbl_buyer
+set butel='010-333-3333'
+WHERE buid='0003';
+
+/*
+전체 고객 데이터를 조회
+이몽룡의 주소가 현재 서울특별시이다
+그런데 이몽룡이 전라북도 익산시로 이사를 했다 
+이몽룡의 주소를 서울특별시에서 전라북도 익산시로 변경하고자 한다
+
+*/
+select * FROM tbl_buyer;
+
+
+select * from tbl_buyer where buname ='이몽룡';
+UPDATE tbl_buyer set buaddr='전라북도 익산시' WHERE buid='0001';
+
+select * FROM tbl_buyer;
+
+-- pk인 buid값이 0004인 데이터를 삭제하기
+DELETE FROM tbl_buyer
+WHERE buid='0004';
+
+select * FROM tbl_buyer;
+
+-- 데이터 추가 
+-- 칼럼목록 개수 순서= 데이터 목록 개수 , 순서와 일치해야 한다
+INSERT into [table](칼럼목록)
+VALUES(데이터목록);
+
+-- 데이터 조회
+SELECT 칼럼목록 FROM[TABLE]
+WHERE 칼럼= 값;
+
+--데이터 수정
+UPDATE [TABLE] SET 칼럼= 값-- 변경할
+WHERE 칼럼 = 값
+
+-- 데이터 삭제
+DELETE FROM[table]
+WHERE 칼럼 = 값 -- 삭제할 조건
+
+-- 계좌정보
+CREATE TABLE tbl_acc(
+acNum	VARCHAR2(10) PRIMARY KEY,
+acDiv	VARCHAR2(1)	NOT NULL,	
+acBuid	VARCHAR(5)	NOT NULL,	
+acBalance	NUMBER	DEFAULT 0	
+
+);
+
+
+-- 각 고객의 계좌정보 생성하기
+INSERT INTO tbl_acc(acNum, acDiv, acBuid, acBalance)
+values('2023052301', '1','0003',10000);
+
+INSERT INTO tbl_acc(acNum, acDiv, acBuid, acBalance)
+values('2023052302', '1','0001',50000);
+
+INSERT INTO tbl_acc(acNum, acDiv, acBuid, acBalance)
+values('2023052303', '1','0002',10000);
+
+select * from tbl_acc;
+
+/*
+계좌정보를 조회했는데 고객정보가 고객id뿐이라
+고객에 대한 정보를 알수 없다. 고객정보와 계좌정보를 연계하여 함께 볼 수
+있다면 좋을것이다.
+
+TABLE JOIN
+2개이상 table을 서로 연계하여 하나ㅇㅢ 리스트로 보기
+
+tbl_acc와 tbl_buyer 테이블을 연계하여 하나의 리스트로 보여라
+이떄 tblacc 의 acbuid와 tbl buyer buid 칼럼의 데이터를 비교해 
+같은 데이터는 한 라인에 보여라
+*/
+-- join을 하되 4개의 칼럼만 화면에 보이게 하고 싶다
+SELECT acNum,acBuid,buName, buTel 
+FROM tbl_acc, tbl_buyer 
+where acBuId= buId;
+
+SELECT *FROM tbl_buyer;
+
+--projection: SELECT 조회를 할때 별표를 사용하지 않고 칼럼을 나열하는 것
+SELECT buid, buname, butel, buaddr, bubirth, bujob
+FROM tbl_buyer
+order by buid;-- id순으로 정렬
+
+SELECT buid, buname, butel, buaddr, bubirth, bujob
+FROM tbl_buyer
+order by buname,butel; -- 이름순으로 정렬하는데 이름이 같으면 전화번호 순으로 정렬
+
+
+INSERT INTO tbl_buyer(buid, buname, butel)
+Values('0004','임꺽정','01021-1-144444');
+
+-- SQL Developer 와 java 코드엣 DB를 서로 연동하여 처리하는 경우 발생하는 문제
+-- SQL에서 데이터를 INSERT UPDATE DELETE를 수행하는 경우
+-- 추가 수정 삭제된 정보는 아직 storage에 반영되지 않고, 메모리에 임시 보관된 상태이다
+-- 이 상태일때 java에서 select를 수행하면 insert update delete 된 데이터가 아닌 이전
+-- 상태의 데이터가 조ㅗㅓㅣ된다
+-- 간혹 이 상태에서 DBMS가 Connection 에서 무한정 응답하지 않는 경우도 있다.
+-- java는 DBMS가 응답하기를 기다리면서 무한정 기다리고 마치 프로젝트가 멈춘 상태가 되어 버린다
+
+-- SQL 에서 INSERT UPDATE DELETE를 수행한 다음에는 강제로 storagedp commit을
+-- 해 주어야 한다
+-- 그래야만 JAVA에서 프로젝트를 조회할수 있다.
+COMMIT;
+
+SELECT * FROM tbl_buyer;
+INSERT INTO tbl_buyer(buid, buname)
+VALUES ('0005','장길산');
+
+/*
+COMMIT 되기 전의 데이터를 취소하는 명령
+*/
+ROLLBACK;
+
+-- pk 칼럼을 기준으로 조건을 설정해 지정하기
+-- pk 칼럼을 기준으로조회를 하면 데이터가 없거나 하나만 조회된다.
+select buid, buname, butel, buaddr, bubirth, bujob
+from tbl_buyer
+where buid= '0001';
+
+
+
