@@ -184,7 +184,6 @@ acNum	VARCHAR2(10) PRIMARY KEY,
 acDiv	VARCHAR2(1)	NOT NULL,	
 acBuid	VARCHAR(5)	NOT NULL,	
 acBalance	NUMBER	DEFAULT 0	
-
 );
 
 
@@ -259,6 +258,5 @@ ROLLBACK;
 select buid, buname, butel, buaddr, bubirth, bujob
 from tbl_buyer
 where buid= '0001';
-
 
 
