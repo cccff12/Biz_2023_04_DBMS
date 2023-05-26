@@ -143,4 +143,4 @@ delete from tbl_student
 where st_num='230001';
 
 
-
+commit;
