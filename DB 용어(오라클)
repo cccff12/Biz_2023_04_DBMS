@@ -1,0 +1,163 @@
+DB 용어(오라클)
+
+사전 : 테이블의 설정 등
+
+DDL- 
+Creater:새로운 데이터베이스 또는 테이블 생성
+DROP: 데이터베이스 또는 테이블 삭제, ROLLBACK으로 복구 불가
+Alter:기존 데이터베이스 또는 테이블 변경
+
+
+DCL- 
+GRANT:특정 권한 부여
+REVOKE:특정 권한 회수
+COMMIT:변경된 내용을 영구 적용
+ROLL BACK:변경 이전 값으로 되돌림
+
+DML-
+CREATE :(명령어INSERT) 데이터 입력할 때 사용한다.
+READ: (SELECT)데이터 조회할 때 사용한다. 
+UPDATE: UPDATE데이터 내용 변경 할 때 사용한다
+DELETE: 데이터 내용 삭제할 때 사용한다.
+
+
+오라클은 저장소와 유저가 같음
+-- : 커맨트(자바의 //)
+
+파일만들기
+CREATE TABLESPACE myDB- 명령어
+DATAFILE'C:/app/data/mydb.dbf'- 파일을 만들주소
+SIZE 1M AUTOEXTEND ON NEXT 1K; - 파일의 크기
+
+
+테이블 만들기
+CREATE TABLE 테이블이름(
+
+acNum	VARCHAR2(10) PRIMARY KEY,
+acDiv	VARCHAR2(1)	NOT NULL,	
+acBuid	VARCHAR(5)	NOT NULL,	
+acBalance	NUMBER	DEFAULT 0	
+위는 예시
+);
+
+
+CREATE table tbl_accList (
+aioSEQ	NUMBER		PRIMARY KEY,
+acNum	VARCHAR2(20)	NOT NULL,	
+aioDate	VARCHAR2(10)	NOT NULL,------- , 잊지말고	
+aioTime	VARCHAR2(10)	NOT NULL,	
+aioDiv	VARCHAR2(1)	NOT NULL,	
+aioInput	NUMBER	DEFAULT 0,---- 0 앞에 띄어쓰기	
+aioOutput	NUMBER	DEFAULT 0,	
+aioREM	VARCHAR2(30)		
+);
+
+일련번호 자동생성
+create SEQUENCE seq_accList(테이블)
+start with 1 INCREMENT by 1;
+
+SELECT seq_accList.nextval from dual; -- 실행될때마다 1씩 증가
+
+INSERT into tbl_acclist(aioSEQ, acNum,aioDate, aioTime, aioDiv, aioInput, aioOutput)
+VALUES(seq_acclist.nextval, '2023052401','2023-05-24','11:10:00','1',10000,0);
+
+이후 정보 생성
+
+INSERT INTO tbl_acc(acNum, acDiv, acBuid, acBalance)
+values('2023052301', '1','0003',10000);
+
+INSERT INTO tbl_acc(acNum, acDiv, acBuid, acBalance)
+values('2023052302', '1','0001',50000);
+
+INSERT INTO tbl_acc(acNum, acDiv, acBuid, acBalance)
+values('2023052303', '1','0002',10000);
+
+select * from tbl_acc;
+
+
+
+tbl_acc와 tbl_buyer 테이블을 연계하여 하나의 리스트로 보여라
+이떄 tblacc 의 acbuid와 tbl buyer buid 칼럼의 데이터를 비교해 
+같은 데이터는 한 라인에 보여라
+*/
+-- join을 하되 4개의 칼럼만 화면에 보이게 하고 싶다
+	SELECT acNum,acBuid,buName, buTel 
+	FROM tbl_acc, tbl_buyer 
+	where acBuId= buId;
+
+--고객 아이디가 0001이거나 0003이거나 조회
+	SELECT *
+	FROM tbl_acc
+	WHERE acbuid= '0001' OR acBuid ='0003';
+
+
+-- 어떤 요소 값이 얼마 이하인 값을 찾고 싶다
+	SELECT *
+	from tbl_acc
+	where acbalance >= 20000;
+
+
+
+-- 1개의 칼럼에 다수의 조건 검색이 필요한 경우
+-- or 연산일 경우 in 키워드를 사용할 수 있다.
+	select *
+	from tbl_acc
+	where acbuid in ('0001','0003');
+
+
+-- 위와 같은 결과의 코드
+-- acbuid가 0001이 아니고  acbuid가 0003이 아닐때
+	select *
+	from tbl_acc
+	where acbuid !='0001' and acbuid<> '0003'; 
+
+
+--projection: SELECT 조회를 할때 별표를 사용하지 않고 칼럼을 나열하는 것
+	SELECT buid, buname, butel, buaddr, bubirth, bujob
+	FROM tbl_buyer
+	order by buid;-- id순으로 정렬
+
+-- table의 구조 변경- 칼럼의 길이 변경
+	alter TABLE tbl_acc MODIFY (acNum VARCHAR2(20)); 
+	desc tbl_acc;
+
+
+
+INSERT INTO 테이블(요기랑, 여기에)
+VALUES ('이거랑','이거');
+
+SELECT * FROM 테이블명;- 테이블 조회
+COMMIT; = 스토리지에 저장
+ROLLBACK;= COMMIT전에 명령 취소
+ASCENDING= 오름차순 정렬 
+	SELECT *
+	from tbl_acc
+	WHERE acbuid= '0001'
+	ORDER BY acbalance ASC;
+
+DESENDING= 내림차순 정렬
+SELECT *
+from tbl_acc
+WHERE acbuid= '0001'
+ORDER BY acbalance DESC;
+
+
+
+-- TABLESPACE생성(CREATE 키워드)
+
+	CREATE TABLESPACE student -- 저장소의 이름을 student라는 이름으로 사용하겠다
+	DATAFILE 'C:/app/data/student.dbf' -- 저장소 폴더에 student.dbg라는 이름으로 생성
+	SIZE 1M AUTOEXTEND ON NEXT 1K;-- 초기에 저장소 공간을 1M 확보하고 혹시 부족하면 1K 씩 자동으로 증가하라
+
+
+
+종합
+CREATE TABLESPACE MEMO 
+DATAFILE 'C:/app/data/MEMO.dbf'
+SIZE 1M AUTOEXTEND ON NEXT 1K;
+
+ALTER SESSION SET "_ORACLE_SCRIPT" = true;
+create user MEMO IDENTIFIED by 12341234
+default tablespace MEMO;
+
+GRANT DBA TO MEMO;
