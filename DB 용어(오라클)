@@ -161,3 +161,21 @@ create user MEMO IDENTIFIED by 12341234
 default tablespace MEMO;
 
 GRANT DBA TO MEMO;
+
+
+
+Full Text Search : 칼럼의 데이터의 문자열을 모두 검색하여 일치하는 데이터 찾기
+SELECT 조회 명령 실행 과정에서 가장 느린 Query
+
+
+-- 첫글자가 홍으로 시작되는 이름
+SELECT * FROM tbl_buyer WHERE buName LIKE '홍%';
+
+-- 홍이라는 문자열로 끝나는 모든 이름
+SELECT * FROM tbl_buyer WHERE buName LIKE '%동';
+
+-- 길이라는 문자열이 포함된 모든 이름
+SELECT * FROM tbl_buyer WHERE buname LIKE '%길%';
+
+--테이블에 데이터가 몇 개 있느냐?
+SELECT COUNT(*) FROM tbl_buyer;

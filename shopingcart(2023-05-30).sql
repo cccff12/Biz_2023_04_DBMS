@@ -34,5 +34,8 @@ values('1','홍길동','0101111111','서울');
 INSERT INTO tbl_buyer(buId, buName, buTel, buAddr)
 values('2','성춘향','0102222222','서울');
 
+select * from tbl_buyer;
 
+commit;
 
+select * from tbl_product;
