@@ -71,3 +71,9 @@ from tbl_address
 where substr(a_tel,5,1)='3';
 
 
+SELECT * FROM tbl_address WHERE a_id = 'A0006' ;
+UPDATE tbl_address SET a_name = '홍길동' WHERE a_id = 'A0006';
+COMMIT;
+DESC tbl_address;
+
+UPDATE tbl_address SET a_name='홍길동777', a_tel = '010-1111-1111', a_addr = '서울특별시' WHERE a_id = '00001' ;
