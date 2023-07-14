@@ -128,15 +128,15 @@ select io_inout 구분, p_code 상품코드, p_name 상품명, io_iprice 수량�
 from tbl_iolist, tbl_product
 GROUP BY 구분, 상품코드, 상품명, 수량합계;
 
-select p_code 상품코드, p_name  상품명, count(*) 레코드
+select p_code 상품코드, p_name  상품명, io_qty
 from tbl_iolist, tbl_product
 where io_pcode = p_code
 GROUP BY io_pcode, p_name;
 
-select io_input 구분, p_code 상품코드 ,p_name 상품명, count(*) 수량합계
+select io_inout 구분, io_pcode 상품코드 ,p_name 상품명, sum(io_qty) 수량합계
 from tbl_iolist, tbl_product
 where io_pcode = p_code
-group BY io_input, p_code, p_name, io_qty;
+group BY io_inout, io_pcode, p_name;
 
 
 
