@@ -41,3 +41,34 @@ b_image
 );
 select * from tbl_bbs;
 
+create table tbl_images(
+i_seq	bigint		PRiMARY KEY	AUTO_INCREMENT,
+i_dseq	bigint	NOT NULL,
+i_originalName	VARCHAR(125),			
+i_uploadName	VARCHAR(255)			
+);
+desc tbl_images;
+
+
+
+
+create DATABASE carDB; 
+USE carDB;
+
+CREATE TABLE tbl_car(
+c_seq	BIGINT	AUTO_INCREMENT PRIMARY KEY,
+c_type	VARCHAR(10)	NOT NULL,
+c_startday	VARCHAR(20),	
+c_starttime	VARCHAR(20),	
+c_startdistance	VARCHAR(30)	NOT NULL,
+c_arrival	VARCHAR(20),	
+c_arrivaltime	VARCHAR(50),	
+c_arrivaldistance	VARCHAR(50),	
+c_place	VARCHAR(20)	NOT NULL,
+c_pay	VARCHAR(30)	
+);
+
+desc tbl_car;
+commit;
+-- Insert into TBL_ADDRESS (A_ID,A_NAME,A_TEL,A_ADDR) values ('A0097','기원호','090-7737-7520','울산시 남구 달동 130-3번지');
+
